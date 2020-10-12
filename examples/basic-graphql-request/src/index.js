@@ -4,7 +4,6 @@ import ReactDOM from "react-dom";
 import {
   useQuery,
   useQueryClient,
-  QueryCache,
   QueryClient,
   QueryClientProvider,
 } from "react-query";
@@ -13,8 +12,7 @@ import { request, gql } from "graphql-request";
 
 const endpoint = "https://graphqlzero.almansi.me/api";
 
-const cache = new QueryCache();
-const client = new QueryClient({ cache });
+const client = new QueryClient();
 
 function App() {
   const [postId, setPostId] = React.useState(-1);

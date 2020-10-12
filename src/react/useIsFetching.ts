@@ -26,7 +26,7 @@ export function useIsFetching(
 
   React.useEffect(
     () =>
-      client.getCache().subscribe(() => {
+      client.getQueryCache().subscribe(() => {
         if (isMounted()) {
           const newIsFetching = client.isFetching(filtersRef.current)
           if (isFetchingRef.current !== newIsFetching) {

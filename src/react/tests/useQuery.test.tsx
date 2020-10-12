@@ -10,11 +10,11 @@ import {
   renderWithClient,
   setActTimeout,
 } from './utils'
-import { useQuery, QueryClient, UseQueryResult, QueryCache } from '../..'
+import { useQuery, QueryClient, UseQueryResult } from '../..'
 
 describe('useQuery', () => {
-  const cache = new QueryCache()
-  const client = new QueryClient({ cache })
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
 
   it('should return the correct types', () => {
     const key = queryKey()
@@ -429,7 +429,7 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
-    client.setQueryDefaults(key, () => 'data')
+    client.setQueryDefaults(key, { queryFn: () => 'data' })
 
     function Page() {
       const state = useQuery<string>(key)

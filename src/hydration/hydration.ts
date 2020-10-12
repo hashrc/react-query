@@ -1,6 +1,6 @@
-import { Query } from '../core/query'
-import { QueryCache } from '../core/queryCache'
-import { QueryKey, QueryOptions } from '../core/types'
+import type { QueryClient } from '../core/queryClient'
+import { Query, QueryState } from '../core/query'
+import type { QueryKey, QueryOptions } from '../core/types'
 
 // TYPES
 
@@ -19,8 +19,7 @@ interface DehydratedQueryConfig {
 interface DehydratedQuery {
   queryKey: QueryKey
   queryHash: string
-  data?: unknown
-  updatedAt: number
+  state: QueryState
   config: DehydratedQueryConfig
 }
 
@@ -49,10 +48,9 @@ function dehydrateQuery(query: Query): DehydratedQuery {
     config: {
       cacheTime: serializePositiveNumber(query.cacheTime),
     },
-    data: query.state.data,
+    state: query.state,
     queryKey: query.queryKey,
     queryHash: query.queryHash,
-    updatedAt: query.state.updatedAt,
   }
 }
 
@@ -61,7 +59,7 @@ function defaultShouldDehydrate(query: Query) {
 }
 
 export function dehydrate(
-  cache: QueryCache,
+  client: QueryClient,
   options?: DehydrateOptions
 ): DehydratedState {
   options = options || {}
@@ -69,17 +67,20 @@ export function dehydrate(
   const shouldDehydrate = options.shouldDehydrate || defaultShouldDehydrate
   const queries: DehydratedQuery[] = []
 
-  cache.getAll().forEach(query => {
-    if (shouldDehydrate(query)) {
-      queries.push(dehydrateQuery(query))
-    }
-  })
+  client
+    .getQueryCache()
+    .getAll()
+    .forEach(query => {
+      if (shouldDehydrate(query)) {
+        queries.push(dehydrateQuery(query))
+      }
+    })
 
   return { queries }
 }
 
 export function hydrate(
-  cache: QueryCache,
+  client: QueryClient,
   dehydratedState: unknown,
   options?: HydrateOptions
 ): void {
@@ -87,34 +88,30 @@ export function hydrate(
     return
   }
 
+  const cache = client.getQueryCache()
   const defaultOptions = options?.defaultOptions || {}
   const queries = (dehydratedState as DehydratedState).queries || []
 
   queries.forEach(dehydratedQuery => {
-    let query = cache.get(dehydratedQuery.queryHash)
+    const query = cache.get(dehydratedQuery.queryHash)
 
     // Do not hydrate if an existing query exists with newer data
-    if (query && query.state.updatedAt >= dehydratedQuery.updatedAt) {
+    if (query) {
+      if (query.state.updatedAt < dehydratedQuery.state.updatedAt) {
+        query.setState(dehydratedQuery.state)
+      }
       return
     }
 
-    if (!query) {
-      query = new Query({
-        cache: cache,
+    // Restore query
+    client.restoreQuery(
+      {
+        ...defaultOptions,
         queryKey: dehydratedQuery.queryKey,
         queryHash: dehydratedQuery.queryHash,
-        options: {
-          ...defaultOptions,
-          cacheTime: deserializePositiveNumber(
-            dehydratedQuery.config.cacheTime
-          ),
-        },
-      })
-      cache.add(query)
-    }
-
-    query.setData(dehydratedQuery.data, {
-      updatedAt: dehydratedQuery.updatedAt,
-    })
+        cacheTime: deserializePositiveNumber(dehydratedQuery.config.cacheTime),
+      },
+      dehydratedQuery.state
+    )
   })
 }

@@ -2,7 +2,6 @@ import React, { lazy } from "react";
 import ReactDOM from "react-dom";
 import {
   useQueryClient,
-  QueryCache,
   QueryClient,
   QueryClientProvider,
   QueryErrorResetBoundary,
@@ -19,9 +18,7 @@ import Button from "./components/Button";
 const Projects = lazy(() => import("./components/Projects"));
 const Project = lazy(() => import("./components/Project"));
 
-const cache = new QueryCache();
 const client = new QueryClient({
-  cache,
   defaultOptions: {
     queries: {
       retry: 0,

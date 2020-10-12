@@ -2,20 +2,14 @@ import React from 'react'
 import Link from 'next/link'
 import axios from 'axios'
 
-import {
-  useInfiniteQuery,
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-} from 'react-query'
+import { useInfiniteQuery, QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
 //
 
 import useIntersectionObserver from '../hooks/useIntersectionObserver'
 
-const cache = new QueryCache()
-const client = new QueryClient({ cache })
+const client = new QueryClient()
 
 export default function App() {
   return (

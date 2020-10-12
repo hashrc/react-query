@@ -8,12 +8,7 @@ import {
   renderWithClient,
   setActTimeout,
 } from './utils'
-import {
-  useInfiniteQuery,
-  UseInfiniteQueryResult,
-  QueryClient,
-  QueryCache,
-} from '../..'
+import { useInfiniteQuery, UseInfiniteQueryResult, QueryClient } from '../..'
 
 interface Result {
   items: number[]
@@ -40,8 +35,7 @@ const fetchItems = async (
 }
 
 describe('useInfiniteQuery', () => {
-  const cache = new QueryCache()
-  const client = new QueryClient({ cache })
+  const client = new QueryClient()
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()

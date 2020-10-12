@@ -1,6 +1,7 @@
 import React from 'react'
-import { QueryCache } from 'react-query'
+import { QueryClient } from 'react-query'
 import { dehydrate } from 'react-query/hydration'
+
 import { Layout, Header, InfoBox, PostList } from '../components'
 import { fetchPosts } from '../hooks'
 
@@ -15,12 +16,12 @@ const Home = () => {
 }
 
 export async function getStaticProps() {
-  const queryCache = new QueryCache()
-  await queryCache.prefetchQuery(['posts', 10], fetchPosts)
+  const client = new QueryClient()
+  await client.prefetchQuery(['posts', 10], fetchPosts)
 
   return {
     props: {
-      dehydratedState: dehydrate(queryCache),
+      dehydratedState: dehydrate(client),
     },
   }
 }

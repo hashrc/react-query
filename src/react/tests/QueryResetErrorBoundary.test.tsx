@@ -3,16 +3,10 @@ import { ErrorBoundary } from 'react-error-boundary'
 import React from 'react'
 
 import { sleep, queryKey, mockConsoleError, renderWithClient } from './utils'
-import {
-  useQuery,
-  QueryClient,
-  QueryCache,
-  QueryErrorResetBoundary,
-} from '../..'
+import { useQuery, QueryClient, QueryErrorResetBoundary } from '../..'
 
 describe('QueryErrorResetBoundary', () => {
-  const cache = new QueryCache()
-  const client = new QueryClient({ cache })
+  const client = new QueryClient()
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
     const key = queryKey()

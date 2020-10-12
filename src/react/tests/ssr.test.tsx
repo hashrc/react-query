@@ -7,12 +7,11 @@ import React from 'react'
 import { renderToString } from 'react-dom/server'
 
 import { sleep, queryKey } from './utils'
-import { useQuery, QueryClient, QueryClientProvider, QueryCache } from '../..'
+import { useQuery, QueryClient, QueryClientProvider } from '../..'
 
 describe('Server Side Rendering', () => {
   it('should not trigger fetch', () => {
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const client = new QueryClient()
     const key = queryKey()
     const queryFn = jest.fn()
 
@@ -36,23 +35,21 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('status loading')
     expect(queryFn).toHaveBeenCalledTimes(0)
-    cache.clear()
+    client.clear()
   })
 
   it('should add prefetched data to cache', async () => {
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const client = new QueryClient()
     const key = queryKey()
     const fetchFn = () => Promise.resolve('data')
     const data = await client.fetchQueryData(key, fetchFn)
     expect(data).toBe('data')
-    expect(client.getCache().find(key)?.state.data).toBe('data')
-    cache.clear()
+    expect(client.getQueryCache().find(key)?.state.data).toBe('data')
+    client.clear()
   })
 
   it('should return existing data from the cache', async () => {
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const client = new QueryClient()
     const key = queryKey()
     const queryFn = jest.fn(() => sleep(10))
 
@@ -78,14 +75,13 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('status success')
     expect(queryFn).toHaveBeenCalledTimes(1)
-    cache.clear()
+    client.clear()
   })
 
   it('should add initialData to the cache', () => {
     const key = queryKey()
 
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const client = new QueryClient()
 
     function Page() {
       const [page, setPage] = React.useState(1)
@@ -111,9 +107,12 @@ describe('Server Side Rendering', () => {
       </QueryClientProvider>
     )
 
-    const keys = cache.getAll().map(query => query.queryKey)
+    const keys = client
+      .getQueryCache()
+      .getAll()
+      .map(query => query.queryKey)
 
     expect(keys).toEqual([[key, 1]])
-    cache.clear()
+    client.clear()
   })
 })

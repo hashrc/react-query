@@ -20,11 +20,8 @@ import {
 } from 'react-query'
 import { getTodos, postTodo } from '../my-api'
 
-// Create a cache
-const cache = new QueryCache()
-
 // Create a client
-const client = new QueryClient({ cache })
+const client = new QueryClient()
 
 function App() {
   return (

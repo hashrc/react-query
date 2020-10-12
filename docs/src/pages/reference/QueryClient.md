@@ -8,11 +8,9 @@ title: QueryClient
 The `QueryClient` can be used to interact with a cache:
 
 ```js
-import { QueryClient, QueryCache } from 'react-query'
+import { QueryClient } from 'react-query'
 
-const cache = new QueryCache()
 const client = new QueryClient({
-  cache,
   defaultOptions: {
     queries: {
       staleTime: Infinity,
@@ -43,11 +41,13 @@ Its available methods are:
 
 **Options**
 
-- `cache: QueryCache`
+- `queryCache: QueryCache`
   - The query cache this client is connected to.
+- `mutationCache: MutationCache`
+  - The mutation cache this client is connected to.
 - `defaultOptions: DefaultOptions`
   - Optional
-  - Define defaults for all queries and mutations using this query client.
+  - Define defaults for all queries and mutations using this client.
 
 ## `client.fetchQueryData`
 
@@ -176,7 +176,7 @@ console.log(state.updatedAt)
 `setQueryDefaults` is a synchronous method to set default options for a specific query. If the query does not exist yet it will create it.
 
 ```js
-client.setQueryDefaults('posts', fetchPosts)
+client.setQueryDefaults('posts', { queryFn: fetchPosts })
 
 function Component() {
   const { data } = useQuery('posts')

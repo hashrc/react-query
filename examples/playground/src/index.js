@@ -7,7 +7,6 @@ import {
   useQuery,
   useQueryClient,
   useMutation,
-  QueryCache,
 } from "react-query";
 
 import { ReactQueryDevtools } from "react-query-devtools";
@@ -28,8 +27,7 @@ let errorRate = 0.05;
 let queryTimeMin = 1000;
 let queryTimeMax = 2000;
 
-const cache = new QueryCache();
-const client = new QueryClient({ cache });
+const client = new QueryClient();
 
 function Root() {
   const [staleTime, setStaleTime] = React.useState(1000);

@@ -5,7 +5,6 @@ import { hydrate, HydrateOptions } from './hydration'
 
 export function useHydrate(state: unknown, options?: HydrateOptions) {
   const client = useQueryClient()
-  const cache = client.getCache()
 
   const optionsRef = React.useRef(options)
   optionsRef.current = options
@@ -15,9 +14,9 @@ export function useHydrate(state: unknown, options?: HydrateOptions) {
   // relying on useMemo here is only a performance optimization
   React.useMemo(() => {
     if (state) {
-      hydrate(cache, state, optionsRef.current)
+      hydrate(client, state, optionsRef.current)
     }
-  }, [cache, state])
+  }, [client, state])
 }
 
 export interface HydrateProps {

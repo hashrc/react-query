@@ -6,14 +6,13 @@ import { sleep, queryKey, mockConsoleError, renderWithClient } from './utils'
 import {
   useQuery,
   QueryClient,
-  QueryCache,
   QueryErrorResetBoundary,
   useQueryErrorResetBoundary,
 } from '../..'
 
 describe("useQuery's in Suspense mode", () => {
-  const cache = new QueryCache()
-  const client = new QueryClient({ cache })
+  const client = new QueryClient()
+  const cache = client.getQueryCache()
 
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()

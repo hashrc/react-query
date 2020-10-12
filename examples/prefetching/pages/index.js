@@ -3,7 +3,6 @@ import axios from 'axios'
 import {
   useQuery,
   useQueryClient,
-  QueryCache,
   QueryClient,
   QueryClientProvider,
 } from 'react-query'
@@ -23,8 +22,7 @@ const getCharacter = async (key, selectedChar) => {
   return data
 }
 
-const cache = new QueryCache()
-const client = new QueryClient({ cache })
+const client = new QueryClient()
 
 export default function App() {
   return (

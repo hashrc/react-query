@@ -404,9 +404,9 @@ export class QueryObserver<
 
   private updateQuery(): void {
     const prevQuery = this.currentQuery
-    const query = this.client
-      .getCache()
-      .build(this.options as QueryOptions<TQueryData, TError, TQueryFnData>)
+    const query = this.client.buildQuery(
+      this.options as QueryOptions<TQueryData, TError, TQueryFnData>
+    )
 
     if (query === prevQuery) {
       return
@@ -511,7 +511,7 @@ export class QueryObserver<
 
       // Then the cache listeners
       if (notifyOptions.cache) {
-        this.client.getCache().notify(currentQuery)
+        this.client.getQueryCache().notify(currentQuery)
       }
     })
   }

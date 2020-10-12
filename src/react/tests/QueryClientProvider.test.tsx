@@ -8,8 +8,7 @@ describe('QueryClientProvider', () => {
   test('sets a specific cache for all queries to use', async () => {
     const key = queryKey()
 
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const client = new QueryClient()
 
     function Page() {
       const { data } = useQuery(key, async () => {
@@ -32,7 +31,7 @@ describe('QueryClientProvider', () => {
 
     await waitFor(() => rendered.getByText('test'))
 
-    expect(client.getCache().find(key)).toBeDefined()
+    expect(client.getQueryCache().find(key)).toBeDefined()
   })
 
   test('allows multiple caches to be partitioned', async () => {
@@ -42,8 +41,8 @@ describe('QueryClientProvider', () => {
     const cache1 = new QueryCache()
     const cache2 = new QueryCache()
 
-    const client1 = new QueryClient({ cache: cache1 })
-    const client2 = new QueryClient({ cache: cache2 })
+    const client1 = new QueryClient({ queryCache: cache1 })
+    const client2 = new QueryClient({ queryCache: cache2 })
 
     function Page1() {
       const { data } = useQuery(key1, async () => {
@@ -93,15 +92,15 @@ describe('QueryClientProvider', () => {
   test("uses defaultOptions for queries when they don't provide their own config", async () => {
     const key = queryKey()
 
-    const cache = new QueryCache()
     const client = new QueryClient({
-      cache,
       defaultOptions: {
         queries: {
           cacheTime: Infinity,
         },
       },
     })
+
+    const cache = client.getQueryCache()
 
     function Page() {
       const { data } = useQuery(key, async () => {

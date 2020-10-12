@@ -8,13 +8,12 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import { useQuery, useIsFetching, QueryClient, QueryCache } from '../..'
+import { useQuery, useIsFetching, QueryClient } from '../..'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const client = new QueryClient()
     const key = queryKey()
 
     function Page() {
@@ -51,8 +50,7 @@ describe('useIsFetching', () => {
 
   it('should not update state while rendering', async () => {
     const consoleMock = mockConsoleError()
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const client = new QueryClient()
 
     const key1 = queryKey()
     const key2 = queryKey()
@@ -108,8 +106,7 @@ describe('useIsFetching', () => {
   })
 
   it('should be able to filter', async () => {
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const client = new QueryClient()
     const key1 = queryKey()
     const key2 = queryKey()
 

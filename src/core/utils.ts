@@ -1,5 +1,7 @@
 import type { Query } from './query'
 import type {
+  MutationFunction,
+  MutationOptions,
   QueryFunction,
   QueryKey,
   QueryKeyHashFunction,
@@ -85,10 +87,6 @@ export function functionalUpdate<TInput, TOutput>(
     : updater
 }
 
-export function defaultRetryDelay(attempt: number) {
-  return Math.min(1000 * 2 ** attempt, 30000)
-}
-
 export function isValidTimeout(value: any): value is number {
   return typeof value === 'number' && value >= 0 && value !== Infinity
 }
@@ -145,6 +143,14 @@ export function parseQueryArgs<TOptions extends QueryOptions<any, any>>(
   }
 
   return { ...arg2, queryKey: arg1 } as TOptions
+}
+
+export function parseMutationArgs<
+  TOptions extends MutationOptions<any, any, any, any>
+>(arg1: MutationFunction<any, any> | TOptions, arg2?: TOptions): TOptions {
+  return (typeof arg1 === 'function'
+    ? { ...arg2, mutationFn: arg1 }
+    : arg1) as TOptions
 }
 
 export function parseFilterArgs<

@@ -23,10 +23,9 @@ This has some benefits:
 Use the `QueryClientProvider` component to connect a `QueryClient` to your application:
 
 ```js
-import { QueryClient, QueryClientProvider, QueryCache } from 'react-query'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
-const cache = new QueryCache()
-const client = new QueryClient({ cache })
+const client = new QueryClient()
 
 function App() {
   return <QueryClientProvider client={client}>...</QueryClientProvider>
@@ -58,7 +57,6 @@ The `ReactQueryConfigProvider` component has been removed. Default options for q
 
 ```js
 const client = new QueryClient({
-  cache,
   defaultOptions: {
     queries: {
       staleTime: Infinity,
@@ -370,7 +368,7 @@ const unsubscribe = observer.subscribe(result => {
 The `client.setQueryDefaults()` method to set default options for a specific query. If the query does not exist yet it will create it.
 
 ```js
-client.setQueryDefaults('posts', fetchPosts)
+client.setQueryDefaults('posts', { queryFn: fetchPosts })
 
 function Component() {
   const { data } = useQuery('posts')
